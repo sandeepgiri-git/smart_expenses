@@ -2,10 +2,20 @@
 
 import Link from 'next/link';
 import { SplitSquareHorizontal, Moon, Sun } from 'lucide-react';
-import { useTheme } from '@/components/theme/ThemeProvider';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 export function Navbar() {
-  const { isDark, toggle } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  const isDark = resolvedTheme === 'dark';
+  const toggle = () => setTheme(isDark ? 'light' : 'dark');
 
   return (
     <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
@@ -20,14 +30,16 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-3">
-          <button
-            id="theme-toggle"
-            onClick={toggle}
-            className="p-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 cursor-pointer"
-            aria-label="Toggle theme"
-          >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+          {mounted && (
+            <button
+              id="theme-toggle"
+              onClick={toggle}
+              className="p-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800 cursor-pointer"
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          )}
         </div>
       </div>
     </header>
